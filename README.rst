@@ -2,13 +2,15 @@ itkARGUS
 =================================
 
 .. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
-    :target: https://github.com/KitwareMedical/AnatomicRecon-POCUS-AI/blob/master/LICENSE
+    :target: https://github.com/KitwareMedical/POCUS_AI_ARGUS/blob/master/LICENSE
     :alt: License
 
 Overview
 --------
 
-Contains C++ methods used by Kitware's Anatomic Reconstruction for Generalized UltraSound project.  These methods are implemented in C++ for speed, and then wrapped into python for use in the project.
+Anatomic Reconstruction for Generalizable UltraSound (ARGUS) AI: A library for point-of-care ultrasound AI using MONAI and ITK.
+
+This library includes the itk-ARGUS extension for ITK.   This extension is based on C++ methods used by the ARGUS library.  The itk-ARGUS methods are implemented in C++ for speed, and then wrapped into python for use in the project.
 
 Build Steps
 -----------
@@ -20,10 +22,10 @@ Option 1: If you don't have a from-source build of ITK:
 3. To rebuild, run `./ITKPythonPackage/scripts/dockcross-manylinux-build-module-wheels.sh`
 
 Option 2: If oyu have a from-source build of ITK:
-1. `git clone https://github.com/KitwareMedical/AnatomicRecon-POCUS-AI`
-2. `mkdir itkARGUS-Release`
-3. `cd itkARGUS-Release`
-4. `cmake-gui ../AnatomicRecon-POCUS-AI`
+1. `git clone https://github.com/KitwareMedical/POCUS_AI_ARGUS`
+2. `mkdir POCUS_AI_ARGUS-Release`
+3. `cd POCUS_AI_ARGUS-Release`
+4. `cmake-gui ../POCUS_AI_ARGUS`
   - Make certain to specify CMAKE_BUILD_TYPE=Release.
   - It should automatically find your ITK build directory
 5. Compile the project.  It should then be wrapped for python and

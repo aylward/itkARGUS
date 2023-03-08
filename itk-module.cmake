@@ -15,7 +15,6 @@ itk_module(itkARGUS
   DEPENDS
     ITKCommon
     ITKStatistics
-    ITKConnectedComponents
   COMPILE_DEPENDS
     ITKImageSources
   TEST_DEPENDS
