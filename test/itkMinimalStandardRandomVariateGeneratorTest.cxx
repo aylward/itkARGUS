@@ -24,7 +24,7 @@
 int
 itkMinimalStandardRandomVariateGeneratorTest(int, char *[])
 {
-  typedef itk::Statistics::MinimalStandardRandomVariateGenerator GeneratorType;
+  typedef itk::argus::MinimalStandardRandomVariateGenerator GeneratorType;
   GeneratorType::Pointer                                         generator = GeneratorType::New();
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(generator, MinimalStandardRandomVariateGenerator, RandomVariateGeneratorBase);

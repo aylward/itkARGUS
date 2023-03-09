@@ -69,7 +69,7 @@ itkResampleImageUsingMapFilterTest(int argc, char * argv[])
   using PixelType = float;
   using ImageType = itk::Image<PixelType, Dimension>;
 
-  using FilterType = itk::ResampleImageUsingMapFilter<ImageType, ImageType>;
+  using FilterType = itk::argus::ResampleImageUsingMapFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   std::cout << "Basic object methods test..." << std::endl;
