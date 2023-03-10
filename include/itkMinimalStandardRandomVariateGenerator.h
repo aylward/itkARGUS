@@ -29,6 +29,7 @@ namespace itk
 
 namespace argus
 {
+
 /** \class MinimalStandardRandomVariateGenerator
  * \brief Linear congruential random random variate generator.
  *
@@ -51,7 +52,8 @@ namespace argus
  *
  * \ingroup itkARGUS
  */
-class itkARGUS_EXPORT MinimalStandardRandomVariateGenerator : public RandomVariateGeneratorBase
+class itkARGUS_EXPORT MinimalStandardRandomVariateGenerator
+       	: public itk::Statistics::RandomVariateGeneratorBase
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(MinimalStandardRandomVariateGenerator);

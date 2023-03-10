@@ -19,7 +19,7 @@
 
 namespace itk
 {
-namespace Statistics
+namespace argus
 {
 
 MinimalStandardRandomVariateGenerator ::MinimalStandardRandomVariateGenerator()
