@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Kitware, Inc.
+ *  Copyright Kitware
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 #include "itkProcessObject.h"
 #include "itkConnectedComponentImageFilter.h"
 
-// TubeTK includes
+// itkARGUS includes
 #include "argusWrappingMacros.h"
 
 namespace itk
@@ -32,6 +32,7 @@ namespace argus
 {
 /** \class SegmentConnectedComponents
  *
+ *  \ingroup itkARGUS
  */
 
 template< class TImage, class TSeedMask >

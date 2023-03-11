@@ -1,0 +1,6 @@
+monai[nibabble,skimage,itk]
+itk
+itk-tubetk
+matplotlib
+jupyterlab
+scipy

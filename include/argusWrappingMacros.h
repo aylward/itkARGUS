@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Kitware, Inc.
+ *  Copyright Kitware
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@
 /**
  *
  * Defines macros for defining set/get functions of inputs of shadow classes
- * in TubeTK/ITKModukes that do python wrapping of TubeTK/Applications
+ * that do python wrapping
  *
- *  \ingroup TubeTK
+ *  \ingroup itkARGUS
  */
 
 #ifndef argusWrappingMacros_h

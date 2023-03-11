@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Kitware, Inc.
+ *  Copyright Kitware
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace argus
  * \ingroup itkARGUS
  */
 class itkARGUS_EXPORT MinimalStandardRandomVariateGenerator
-       	: public itk::Statistics::RandomVariateGeneratorBase
+: public itk::Statistics::RandomVariateGeneratorBase
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(MinimalStandardRandomVariateGenerator);
