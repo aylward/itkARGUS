@@ -8,11 +8,6 @@ import sys
 
 import itk
 
-import site
-site.addsitedir('../../')
-from ARGUSUtils import *
-from ARGUSUtils_IO import *
-
 itkResampleImageUsingMapFilter = itk.itkARGUS.ResampleImageUsingMapFilter
 
 def resample_speed_test(video, mapping):

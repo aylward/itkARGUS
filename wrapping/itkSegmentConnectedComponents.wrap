@@ -1,7 +1,7 @@
 itk_wrap_include( itkSegmentConnectedComponents.h )
 itk_wrap_include( itkImage.h )
 
-itk_wrap_named_class("itk::SegmentConnectedComponents" itkSegmentConnectedComponents POINTER)
+itk_wrap_named_class("itk::argus::SegmentConnectedComponents" itkSegmentConnectedComponents POINTER)
   foreach(t ${WRAP_ITK_INT})
     foreach(t2 ${WRAP_ITK_INT})
       foreach(d 2 3)

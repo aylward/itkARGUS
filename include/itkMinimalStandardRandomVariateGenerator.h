@@ -1,12 +1,12 @@
 /*=========================================================================
  *
- *  Copyright NumFOCUS
+ *  Copyright Kitware
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *         https://www.apache.org/licenses/LICENSE-2.0.txt
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,8 +26,10 @@
 
 namespace itk
 {
-namespace Statistics
+
+namespace argus
 {
+
 /** \class MinimalStandardRandomVariateGenerator
  * \brief Linear congruential random random variate generator.
  *
@@ -50,7 +52,8 @@ namespace Statistics
  *
  * \ingroup itkARGUS
  */
-class itkARGUS_EXPORT MinimalStandardRandomVariateGenerator : public RandomVariateGeneratorBase
+class itkARGUS_EXPORT MinimalStandardRandomVariateGenerator
+: public itk::Statistics::RandomVariateGeneratorBase
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(MinimalStandardRandomVariateGenerator);
@@ -90,7 +93,7 @@ private:
   NormalGeneratorType::Pointer m_NormalGenerator;
 };
 
-} // end of namespace Statistics
+} // end of namespace argus
 } // end of namespace itk
 
 #endif // itkMinimalStandardRandomVariateGenerator_h

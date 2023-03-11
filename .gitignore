@@ -6,3 +6,5 @@ ITKPythonPackage
 *.egg-info
 tools
 zstd-*
+__pycache__
+.ipynb_checkpoints
