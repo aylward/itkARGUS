@@ -1,5 +1,0 @@
-test/.*\.cxx Header Disable
-test/.*\.cxx Namespace Disable
-src/.*\.cxx Header Disable
-include/.*\.h Header Disable
-include/.*\.hxx Header Disable

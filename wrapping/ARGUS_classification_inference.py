@@ -214,7 +214,7 @@ class ARGUS_classification_inference:
         self.model[model_num].load_state_dict(torch.load(filename, map_location=self.device))
         self.model[model_num].eval()
 
-    def preprocess(self, vid_img, lbl_img=None, slice_num=None, scale_data=True, rotate_data=True):
+    def preprocess(self, vid_img, lbl_img=None, slice_num=None, scale_data=True):
         ImageF = itk.Image[itk.F, 3]
         ImageSS = itk.Image[itk.SS, 3]
         
@@ -275,21 +275,6 @@ class ARGUS_classification_inference:
             self.ImageMath3F.IntensityWindow(0,255,0,1)
             vid_roi_img = self.ImageMath3F.GetOutput()
 
-        if rotate_data:
-            permute = itk.PermuteAxesImageFilter[ImageF].New()
-            permute.SetInput(vid_roi_img)
-            order = [1,0,2]
-            permute.SetOrder(order)
-            permute.Update()
-            vid_roi_img = permute.GetOutput()
-            if lbl_img != None:
-                permute = itk.PermuteAxesImageFilter[ImageSS].New()
-                permute.SetInput(lbl_roi_img)
-                order = [1,0,2]
-                permute.SetOrder(order)
-                permute.Update()
-                lbl_roi_img = permute.GetOutput()
-                
         vid_roi_array = itk.GetArrayFromImage(vid_roi_img)
         self.ARGUS_Preprocess.center_slice = self.num_slices//2
         roi_array = self.ARGUS_Preprocess(vid_roi_array)
