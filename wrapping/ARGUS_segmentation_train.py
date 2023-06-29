@@ -42,7 +42,6 @@ import pathlib
 import itk
 
 import matplotlib.pyplot as plt
-from scipy.ndimage import rotate
 
 from ARGUS_segmentation_inference import ARGUS_segmentation_inference
 from ARGUS_Transforms import ARGUS_RandSpatialCropSlicesd
@@ -206,50 +205,22 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
         num_images = len(self.all_train_images)
         print("Num images / labels =", num_images, len(self.all_train_labels))
 
-        if len(self.pos_prefix) == 0:
-            done = False
-            basesize = 2
-            while not done:
-                self.pos_prefix = [os.path.basename(x)[0:basesize] for x in self.all_train_images]
-                test_unique = set(self.pos_prefix)
-                done = True
-                if len(test_unique) != len(self.pos_prefix):
-                    basesize += 1
-                    done = False
-        elif len(self.pos_prefix) < self.num_folds:
-            pos_train_images = [x for x in self.all_train_images if any(pref == os.path.basename(x)[0:len(pref)] for pref in self.pos_prefix)]
-            done = False
-            basesize = 2
-            while not done:
-                self.pos_prefix = [os.path.basename(x)[0:basesize] for x in pos_train_images]
-                test_unique = set(self.pos_prefix)
-                done = True
-                if len(test_unique) != len(pos_train_images):
-                    basesize += 1
-                    done = False
-        if len(self.neg_prefix) == 0:
-            if len(self.pos_prefix) == 0:
-                print("ERROR: Cannot resolve training positive and negative instances")
-        elif len(self.neg_prefix) < self.num_folds:
+        if len(self.pos_prefix)>0 and len(self.neg_prefix)>0:
+            pos_train_images = [x for x in self.all_train_images if any(pref == os.path.basename(x)[:len(pref)] for pref in self.pos_prefix)]
             neg_train_images = [x for x in self.all_train_images if any(pref == os.path.basename(x)[:len(pref)] for pref in self.neg_prefix)]
-            done = False
-            basesize = 2
-            while not done:
-                self.neg_prefix = [os.path.basename(x)[0:basesize] for x in neg_train_images]
-                test_unique = set(self.neg_prefix)
-                done = True
-                if len(test_unique) != len(neg_train_images):
-                    basesize += 1
-                    done = False
-        num_pos = len(self.pos_prefix)
-        num_neg = len(self.neg_prefix)
-        print( f"Num pos / Num neg = {num_pos} / {num_neg}" )
+            pos_train_labels = [x for x in self.all_train_labels if any(pref == os.path.basename(x)[:len(pref)] for pref in self.pos_prefix)]
+            neg_train_labels = [x for x in self.all_train_labels if any(pref == os.path.basename(x)[:len(pref)] for pref in self.neg_prefix)]
+        else:
+            pos_train_images = self.all_train_images
+            neg_train_images = []
+            pos_train_labels = self.all_train_labels
+            neg_train_labels = []
         
-        if self.randomize_folds==True:
-            random.shuffle(self.pos_prefix)
-            random.shuffle(self.neg_prefix)
-            
-        fold_prefix = []
+        num_pos = len(pos_train_images)
+        num_neg = len(neg_train_images)
+        
+        fold_prefixI = []
+        fold_prefixL = []
         pos_fold_size = num_pos // self.num_folds
         neg_fold_size = num_neg // self.num_folds
         pos_extra_case = num_pos - (pos_fold_size * self.num_folds)
@@ -264,34 +235,46 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
             if i<neg_extra_case:
                 neg_fsize += 1
  
-            fprefix = []
+            fprefixI = []
+            fprefixL = []
             for pre in range(pos_fsize):
-                fprefix.append(self.pos_prefix[pos_count+pre])
+                fprefixI.append(pos_train_images[pos_count+pre])
+                fprefixL.append(pos_train_labels[pos_count+pre])
             pos_count += pos_fsize
             for pre in range(neg_fsize):
-                fprefix.append(self.neg_prefix[neg_count+pre])
+                fprefixI.append(neg_train_images[neg_count+pre])
+                fprefixL.append(neg_train_labels[neg_count+pre])
             neg_count += neg_fsize
 
-            fold_prefix.append(fprefix)
+            fold_prefixI.append(fprefixI)
+            fold_prefixL.append(fprefixL)
 
         for i in range(self.num_folds):
-            print(f"VFold-Prefix[{i}] = {fold_prefix[i]}")
+            print(f"VFold-Images[{i}] = {fold_prefixI[i]}")
+        for i in range(self.num_folds):
+            print(f"VFold-Labels[{i}] = {fold_prefixL[i]}")
 
         self.train_files = []
         self.val_files = []
         self.test_files = []
 
         for i in range(self.num_folds):
-            tr_folds = []
-            va_folds = []
-            te_folds = []
+            tr_foldsI = []
+            tr_foldsL = []
+            va_foldsI = []
+            va_foldsL = []
+            te_foldsI = []
+            te_foldsL = []
             if self.num_folds == 1:
                 if self.train_data_portion == 1.0:
-                    tr_folds = fold_prefix[0]
-                    te_folds = fold_prefix[0]
-                    va_folds = fold_prefix[0]
+                    tr_foldsI = fold_prefixI[0]
+                    tr_foldsL = fold_prefixL[0]
+                    te_foldsI = fold_prefixI[0]
+                    te_foldsL = fold_prefixL[0]
+                    va_foldsI = fold_prefixI[0]
+                    va_foldsL = fold_prefixL[0]
                 else:
-                    num_pre = len(fold_prefix[0])
+                    num_pre = len(fold_prefixI[0])
                     num_tr = int(num_pre * self.train_data_portion)
                     num_va = int(num_pre * self.validation_data_portion)
                     num_te = int(num_pre * self.test_data_portion)
@@ -301,11 +284,14 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                     if self.validation_data_portion > 0 and num_va < 1 and num_tr > 2:
                         num_tr -= 1
                         num_va = 1
-                    tr_folds = list(fold_prefix[0][0:num_tr])
+                    tr_foldsI = list(fold_prefixI[0][0:num_tr])
+                    tr_foldsL = list(fold_prefixL[0][0:num_tr])
                     if num_va>0:
-                        va_folds = list(fold_prefix[0][num_tr:num_tr+num_va])
+                        va_foldsI = list(fold_prefixI[0][num_tr:num_tr+num_va])
+                        va_foldsL = list(fold_prefixL[0][num_tr:num_tr+num_va])
                     if num_te>0:
-                        te_folds = list(fold_prefix[0][num_tr+num_va:])
+                        te_foldsI = list(fold_prefixI[0][num_tr+num_va:])
+                        te_foldsL = list(fold_prefixL[0][num_tr+num_va:])
             else:
                 num_tr = int(self.num_folds * self.train_data_portion)
                 num_va = int(self.num_folds * self.validation_data_portion)
@@ -319,16 +305,22 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                 num_tr += self.num_folds - num_tr - num_te - num_va
                 
                 for f in range(i, i + num_tr):
-                    tr_folds.append(fold_prefix[f % self.num_folds])
-                tr_folds = list(np.concatenate(tr_folds).flat)
+                    tr_foldsI.append(fold_prefixI[f % self.num_folds])
+                    tr_foldsL.append(fold_prefixL[f % self.num_folds])
+                tr_foldsI = list(np.concatenate(tr_foldsI).flat)
+                tr_foldsL = list(np.concatenate(tr_foldsL).flat)
                 if num_va > 0:
                     for f in range(i + num_tr, i + num_tr + num_va):
-                        va_folds.append(fold_prefix[f % self.num_folds])
-                    va_folds = list(np.concatenate(va_folds).flat)
+                        va_foldsI.append(fold_prefixI[f % self.num_folds])
+                        va_foldsL.append(fold_prefixL[f % self.num_folds])
+                    va_foldsI = list(np.concatenate(va_foldsI).flat)
+                    va_foldsL = list(np.concatenate(va_foldsL).flat)
                 if num_te > 0:
                     for f in range(i + num_tr + num_va, i + num_tr + num_va + num_te):
-                        te_folds.append(fold_prefix[f % self.num_folds])
-                    te_folds = list(np.concatenate(te_folds).flat)
+                        te_foldsI.append(fold_prefixI[f % self.num_folds])
+                        te_foldsL.append(fold_prefixL[f % self.num_folds])
+                    te_foldsI = list(np.concatenate(te_foldsI).flat)
+                    te_foldsL = list(np.concatenate(te_foldsL).flat)
             self.train_files.append(
                 [
                     {"image": img, "label": seg}
@@ -336,17 +328,17 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                         [
                             im
                             for im in self.all_train_images
-                            if any(pref in im for pref in tr_folds)
+                            if any(pref in im for pref in tr_foldsI)
                         ],
                         [
                             se
                             for se in self.all_train_labels
-                            if any(pref in se for pref in tr_folds)
+                            if any(pref in se for pref in tr_foldsL)
                         ],
                     )
                 ]
             )
-            if len(va_folds) > 0:
+            if len(va_foldsI) > 0:
                 self.val_files.append(
                     [
                         {"image": img, "label": seg}
@@ -354,17 +346,17 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                             [
                                 im
                                 for im in self.all_train_images
-                                if any(pref in im for pref in va_folds)
+                                if any(pref in im for pref in va_foldsI)
                             ],
                             [
                                 se
                                 for se in self.all_train_labels
-                                if any(pref in se for pref in va_folds)
+                                if any(pref in se for pref in va_foldsL)
                             ],
                         )
                     ]
                 )
-            if len(te_folds) > 0:
+            if len(te_foldsI) > 0:
                 self.test_files.append(
                     [
                         {"image": img, "label": seg}
@@ -372,12 +364,12 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                             [
                                 im
                                 for im in self.all_train_images
-                                if any(pref in im for pref in te_folds)
+                                if any(pref in im for pref in te_foldsI)
                             ],
                             [
                                 se
                                 for se in self.all_train_labels
-                                if any(pref in se for pref in te_folds)
+                                if any(pref in se for pref in te_foldsL)
                             ],
                         )
                     ]
@@ -747,14 +739,14 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                                 i * (num_channels + 1) + c + 1,
                             )
                             plt.axis('off')
-                            plt.imshow(rotate(img[c, :, :],270))
+                            plt.imshow(img[c, :, :])
                         plt.subplot(
                             num_images,
                             num_channels + 1,
                             i * (num_channels + 1) + num_channels + 1,
                         )
                         plt.axis('off')
-                        plt.imshow(rotate(lbl[0, :, :],270))
+                        plt.imshow(lbl[0, :, :])
                         plt.show()
                     break
 
@@ -841,7 +833,7 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                     plt.title(f"F"+str(c))
                     tmpV = test_input_images[image_num, c, :, :]
                     plt.axis('off')
-                    plt.imshow(rotate(tmpV,270), cmap="gray")
+                    plt.imshow(tmpV, cmap="gray")
                     subplot_num += 1
                 plt.subplot(num_runs+1, num_subplots, num_subplots)
                 plt.title(f"L")
@@ -849,7 +841,7 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                 for c in range(self.num_classes):
                     tmpV[0, c] = c
                 plt.axis('off')
-                plt.imshow(rotate(tmpV,270))
+                plt.imshow(tmpV)
                 subplot_num += 1
 
             # run probabilities
@@ -867,7 +859,7 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                         plt.title(f"R" + str(run_num) + " C" + str(c))
                         tmpV = prob[c]
                         plt.axis('off')
-                        plt.imshow(rotate(tmpV,270), cmap="gray")
+                        plt.imshow(tmpV, cmap="gray")
                         subplot_num += 1
             prob_total /= num_runs
 
@@ -880,7 +872,7 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                     plt.title(f"E"+str(c))
                     tmpV = prob[c]
                     plt.axis('off')
-                    plt.imshow(rotate(tmpV,270), cmap="gray")
+                    plt.imshow(tmpV, cmap="gray")
                     subplot_num += 1
 
             # ensemble classifications
@@ -897,7 +889,7 @@ class ARGUS_segmentation_train(ARGUS_segmentation_inference):
                 for c in range(self.num_classes):
                     tmpV[0, c] = c
                 plt.axis('off')
-                plt.imshow(rotate(tmpV,270))
+                plt.imshow(tmpV)
                 plt.show()
 
                 class_image = itk.GetImageFromArray(

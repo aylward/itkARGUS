@@ -1,6 +1,8 @@
-monai[nibabble,skimage,itk]
-itk
-itk-tubetk
-matplotlib
-jupyterlab
-scipy
+ffmpeg-python>=0.2.0
+jupyterlab>=4.0.2
+monai>=1.2.0
+numpy>=1.25.0
+itkwidgets>=1.0a34
+av
+#itk-tubetk
+#itk>=5.3.0

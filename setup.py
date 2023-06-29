@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 from os import sys
 
 try:
@@ -13,16 +12,14 @@ except ImportError:
 
 setup(
     name='itk-argus',
-    version='0.9.0',
-    author='Insight Software Consortium',
+    version='0.1.0',
+    author='itkARGUS',
     author_email='itk+community@discourse.itk.org',
     packages=['itk'],
     package_dir={'itk': 'itk'},
-    download_url=r'https://github.com/KitwareMedical/POCUS_AI_ARGUS',
-    description=r'Anatomy Reconstruction for Generalizable UltraSound (ARGUS) AI.',
-    long_description='itk-argus provides a re-usable framework, built on MONAI,  '
-                     'for preprocessing, training, and analyzing POCUS video '
-                     'from point-of-care ultrasound probes using deep learning.',
+    download_url=r'https://github.com/KitwareMedical/AnatomicRecon-POCUS-AI',
+    description=r'Anatomic Reconstruction for Generalized UltraSound (ARGUS) library',
+    long_description='Contains C++ methods that are compiled and wrapped into python for use in the ARGUS project at Kitware.',
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
@@ -44,8 +41,8 @@ setup(
         ],
     license='Apache',
     keywords='ITK InsightToolkit',
-    url=r'https://github.com/KitwareMedical/POCUS_AI_ARGUS',
+    url=r'https://itk.org/',
     install_requires=[
-        r'itk>=v5.3.0'
+        r'itk>=5.2.0.post3'
     ]
     )

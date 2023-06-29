@@ -1,10 +1,4 @@
-*.sw*
-ITK-source
-ITK-cp*
-ITKPythonBuilds-*.zst
-ITKPythonPackage
-*.egg-info
-tools
-zstd-*
-__pycache__
 .ipynb_checkpoints
+__pycache__
+data_cache
+*~

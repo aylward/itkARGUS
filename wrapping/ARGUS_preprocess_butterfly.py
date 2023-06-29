@@ -7,7 +7,7 @@ from os import path
 import itk
 from itk import TubeTK as tube
 
-class ARGUS_preprocess_butterfly():
+class ARGUS_preprocess_butterfly:
 
     def __init__(self, new_size=None):
         ImageFloat = itk.Image[itk.F,3]
